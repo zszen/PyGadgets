@@ -3,7 +3,32 @@ import urllib.request
 import requests
 from bs4 import BeautifulSoup
 import os
+import json
+import sys
 
+file_cfg = 'conf.cfg'
+json_data = None
+filename_download_current = ""
+folder_download = './podcasts'
+
+def load_cfg():
+    global json_data
+    if os.path.exists(file_cfg):
+        with open(file_cfg,'r') as f:
+            try:
+                json_data = json.load(f)
+            except Exception as e:
+                json_data = {}
+            f.close()
+
+def save_cfg():
+    with open(file_cfg,'w') as f:
+        f.seek(0)
+        f.truncate()
+        f.write(json.dumps(json_data))
+        f.close()
+
+load_cfg()
 
 # _ud.mp3:超高清; _hd.mp3:高清; _sd.m4a:低清
 # https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020
@@ -22,20 +47,42 @@ def get_music_lizhifm(url):
         print("!!!"+html['msg'])
         return None
 
+def download_progress(block_num, block_size, total_size):
+    '''回调函数
+       @block_num: 已经下载的数据块
+       @block_size: 数据块的大小
+       @total_size: 远程文件的大小
+    '''
+    sys.stdout.write('\r>> Downloading %s %.1f%%\r' % (filename_download_current,
+                     float(block_num * block_size) / float(total_size) * 100.0))
+    sys.stdout.flush()
 
 def downloadFromPage(startUrl):
+    global json_data,filename_download_current
     page = requests.get(startUrl)
-    userId = re.findall('(/[0-9]{7}/)', startUrl)[0]
+    userId = re.findall('(/[0-9]{5,10}/)', startUrl)[0]
     downloadurl = get_music_lizhifm(startUrl)
     urlList = []
+    # print(page.content)
     bs = BeautifulSoup(page.content, features='lxml')
+    # print()
+    # print(bs.find('div', attrs=''))
     if downloadurl:
+        try:
+            folder_name = bs.select('.breadcrumbs a')[1].text
+        except Exception as e:
+            print(e)
+            folder_name = "未知电台"
+        json_data[folder_name] = startUrl
         title = bs.select(".audioName")[0].text
-        print(title)
+        # print(title)
+        if not os.path.exists(folder_download+'/'+folder_name):
+            os.mkdir(folder_download+'/'+folder_name)
         if title.find('付费') == -1:
-            filename = './download/'+title+'.mp3'
+            filename = '%s/%s/%s.mp3'%(folder_download,folder_name,title)
             if not os.path.exists(filename):
-                urllib.request.urlretrieve(downloadurl, filename)
+                filename_download_current = filename
+                urllib.request.urlretrieve(downloadurl, filename, download_progress)
     # get next url
     for link in bs.findAll('a'):
         url = link.get('href')
@@ -48,10 +95,18 @@ def downloadFromPage(startUrl):
         downloadFromPage(nextUrl)
     else:
         print('urlList length error:')
-        exit()
-
+        save_cfg()
+        return
+        # exit()
 
 if __name__ == '__main__':
     print('*' * 30 + 'ready to download' + '*' * 30)
     url = input('[请输入初始下载链接]:')
-    downloadFromPage(url)
+    # url = 'https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020'
+    if url!='':
+        downloadFromPage(url)
+    for k in json_data:
+        url = json_data[k]
+        print(k)
+        downloadFromPage(url)
+    save_cfg()
