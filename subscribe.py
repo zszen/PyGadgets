@@ -4,12 +4,25 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import json
+import shutil
 import sys
 
 file_cfg = 'conf.cfg'
 json_data = None
 filename_download_current = ""
 folder_download = './podcasts'
+
+def clear_all():
+    make_sure_remove_all = input('你确定要清空%s吗? (OK / any)'%folder_download)
+    if make_sure_remove_all.startswith("OK"):
+        print("清理开始")
+        if os.path.exists(folder_download):
+            for k in os.listdir(folder_download):
+                if os.path.isdir(folder_download+'/'+k):
+                    shutil.rmtree(folder_download+'/'+k)
+        print("清理完毕")
+    else:
+        print("放弃清理")
 
 def load_cfg():
     global json_data
@@ -73,16 +86,21 @@ def downloadFromPage(startUrl):
         except Exception as e:
             print(e)
             folder_name = "未知电台"
-        json_data[folder_name] = startUrl
+        if folder_name not in json_data:
+            json_data[folder_name] = {}
+        json_data[folder_name]['url'] = startUrl
         title = bs.select(".audioName")[0].text
         # print(title)
-        if not os.path.exists(folder_download+'/'+folder_name):
-            os.mkdir(folder_download+'/'+folder_name)
         if title.find('付费') == -1:
             filename = '%s/%s/%s.mp3'%(folder_download,folder_name,title)
-            if not os.path.exists(filename):
-                filename_download_current = filename
+            # if not os.path.exists(filename):
+            filename_download_current = filename
+            if "last" not in json_data[folder_name] or json_data[folder_name]['last']!=downloadurl:
+                if not os.path.exists(folder_download+'/'+folder_name):
+                    os.mkdir(folder_download+'/'+folder_name)
+                json_data[folder_name]['last'] = downloadurl
                 urllib.request.urlretrieve(downloadurl, filename, download_progress)
+    save_cfg()
     # get next url
     for link in bs.findAll('a'):
         url = link.get('href')
@@ -95,18 +113,19 @@ def downloadFromPage(startUrl):
         downloadFromPage(nextUrl)
     else:
         print('urlList length error:')
-        save_cfg()
+        # save_cfg()
         return
         # exit()
 
 if __name__ == '__main__':
     print('*' * 30 + 'ready to download' + '*' * 30)
+    clear_all()
     url = input('[请输入初始下载链接]:')
     # url = 'https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020'
     if url!='':
         downloadFromPage(url)
     for k in json_data:
-        url = json_data[k]
+        url = json_data[k]['url']
         print(k)
         downloadFromPage(url)
     save_cfg()
