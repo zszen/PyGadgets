@@ -1,7 +1,7 @@
 import os
 import shutil
 
-folder = 'podcasts'
+folder = './lizhi/podcasts'
 
 make_sure_remove_all = input('你确定要清空%s吗? (OK / any)'%folder)
 

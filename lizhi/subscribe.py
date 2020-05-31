@@ -7,10 +7,10 @@ import json
 import shutil
 import sys
 
-file_cfg = 'conf.cfg'
+file_cfg = './lizhi/conf.cfg'
 json_data = None
 filename_download_current = ""
-folder_download = './podcasts'
+folder_download = './lizhi/podcasts'
 
 def clear_all():
     make_sure_remove_all = input('你确定要清空%s吗? (OK / any)'%folder_download)
@@ -54,8 +54,8 @@ def get_music_lizhifm(url):
     html = requests.get(url, headers=headers).json()
     # print(html)
     if html['data']:
-          mp3_url = html['data']['url']
-          return mp3_url
+        mp3_url = html['data']['url']
+        return mp3_url
     else:
         print("!!!"+html['msg'])
         return None

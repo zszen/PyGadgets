@@ -9,7 +9,7 @@ import sys
 
 json_data = {}
 filename_download_current = ""
-folder_download = './podcasts'
+folder_download = './lizhi/podcasts'
 
 def get_music_lizhifm(url):
     id = url.rsplit('/', 1)[1]
@@ -19,8 +19,8 @@ def get_music_lizhifm(url):
     }
     html = requests.get(url, headers=headers).json()
     if html['data']:
-          mp3_url = html['data']['url']
-          return mp3_url
+        mp3_url = html['data']['url']
+        return mp3_url
     else:
         print("!!!"+html['msg'])
         return None
