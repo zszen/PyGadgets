@@ -3,7 +3,6 @@
 # time: 2019/04/17--08:12
 __author__ = 'Henry'
 
-
 '''
 项目: B站视频下载
 
@@ -12,11 +11,20 @@ __author__ = 'Henry'
 20190422 - 增加多P视频单独下载其中一集的功能
 '''
 import imageio
-imageio.plugins.ffmpeg.download()
-
-import requests, time, hashlib, urllib.request, re, json
+import requests
+import time
+import re
+import json
+import hashlib
+import urllib.request
 from moviepy.editor import *
-import os, sys
+import os
+import sys
+# import VideoFileClip
+# import moviepy.video.compositing.concatenate
+from bv2av import bv_to_av
+
+imageio.plugins.ffmpeg.download()
 
 
 # 访问API地址
@@ -91,7 +99,7 @@ def format_size(bytes):
     try:
         bytes = float(bytes)
         kb = bytes / 1024
-    except:
+    except e:
         print("传入的字节格式不对")
         return "Error"
     if kb >= 1024:
@@ -177,7 +185,21 @@ if __name__ == '__main__':
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + start
     else:
         # https://www.bilibili.com/video/av46958874/?spm_id_from=333.334.b_63686965665f7265636f6d6d656e64.16
-        start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + re.search(r'/av(\d+)/*', start).group(1)
+        res = re.search(r'/(av|AV)(.*)\?', start)
+        if res is None:
+            # print('error param av')
+            # exit(0)
+            res = re.search(r'((bv|BV)(.*))\?', start)
+            if res is None:
+                print('error param')
+                exit(0)
+            else:
+                # print(res.group(1))
+                av = bv_to_av(res.group(1))
+                start_url = 'https://api.bilibili.com/x/player/pagelist?aid=' + av
+        else:
+            start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + res.group(2)
+        # start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + re.search(r'/(av|bv)(\d+)/*', start).group(1)
 
     # 视频质量
     # <accept_format><![CDATA[flv,flv720,flv480,flv360]]></accept_format>
@@ -189,6 +211,9 @@ if __name__ == '__main__':
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
     }
     html = requests.get(start_url, headers=headers).json()
+    if html['code']!=200:
+        print('error content')
+        exit(0)
     data = html['data']
     video_title=data["title"].replace(" ","_")
     cid_list = []

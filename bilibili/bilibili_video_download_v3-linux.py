@@ -207,6 +207,9 @@ if __name__ == '__main__':
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
     }
     html = requests.get(start_url, headers=headers).json()
+    if html['code']!=200:
+        print('error content')
+        exit(0)
     data = html['data']
     cid_list = []
     if '?p=' in start:

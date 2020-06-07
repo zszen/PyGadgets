@@ -43,6 +43,11 @@ def save_cfg():
 
 load_cfg()
 
+print('============')
+for i,k in enumerate(json_data):
+    print('[%d] %s'%(i,k))
+print('============')
+
 # _ud.mp3:超高清; _hd.mp3:高清; _sd.m4a:低清
 # https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020
 def get_music_lizhifm(url):
