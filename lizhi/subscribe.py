@@ -9,8 +9,10 @@ import sys
 
 file_cfg = './lizhi/conf.cfg'
 json_data = None
-filename_download_current = ""
 folder_download = './lizhi/podcasts'
+current_author_name = ""
+current_title_name = ""
+current_file_path = ""
 
 def clear_all():
     make_sure_remove_all = input('你确定要清空%s吗? (OK / any)'%folder_download)
@@ -71,12 +73,12 @@ def download_progress(block_num, block_size, total_size):
        @block_size: 数据块的大小
        @total_size: 远程文件的大小
     '''
-    sys.stdout.write('\r>> Downloading %s %.1f%%\r' % (filename_download_current,
+    sys.stdout.write('\r>> Downloading [%s] %s %.1f%%\r' % (current_author_name, current_title_name,
                      float(block_num * block_size) / float(total_size) * 100.0))
     sys.stdout.flush()
 
 def downloadFromPage(startUrl):
-    global json_data,filename_download_current
+    global json_data,current_file_path,current_author_name,current_title_name
     page = requests.get(startUrl)
     userId = re.findall('(/[0-9]{5,10}/)', startUrl)[0]
     downloadurl = get_music_lizhifm(startUrl)
@@ -99,7 +101,9 @@ def downloadFromPage(startUrl):
         if title.find('付费') == -1:
             filename = '%s/%s/%s.mp3'%(folder_download,folder_name,title)
             # if not os.path.exists(filename):
-            filename_download_current = filename
+            current_file_path = filename
+            current_author_name = folder_name
+            current_title_name = title
             if "last" not in json_data[folder_name] or json_data[folder_name]['last']!=downloadurl:
                 if not os.path.exists(folder_download+'/'+folder_name):
                     os.mkdir(folder_download+'/'+folder_name)
