@@ -2,19 +2,13 @@
 from selenium import webdriver
 from time import sleep
 # import ffmpeg
-
 import imageio
-imageio.plugins.ffmpeg.download()
-
 import requests, time, hashlib, urllib.request, re, json
 from moviepy.editor import *
 import os, sys
 import subprocess
 
-
-
-
-
+imageio.plugins.ffmpeg.download()
 
 start_time = time.time()
 
@@ -107,7 +101,7 @@ def format_size(bytes):
 def down_video(video_list, title, start_url, page):
     num = 1
     print('[下载P{}段视频]:'.format(page) + title)
-    currentVideoPath = os.path.join(sys.path[0], 'bilibili/download')  # 当前目录作为下载目录
+    currentVideoPath = os.path.join(sys.path[0], 'download')  # 当前目录作为下载目录
     for i in video_list:
         opener = urllib.request.build_opener()
         # 请求头
@@ -128,14 +122,18 @@ def down_video(video_list, title, start_url, page):
             os.makedirs(currentVideoPath)
         # 开始下载
         if len(video_list) > 1:
-            urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}-{}.mp4'.format(title, num)),reporthook=Schedule_cmd)  # 写成mp4也行  title + '-' + num + '.flv'
+            urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}-{}.flv'.format(title, num)),reporthook=Schedule_cmd) 
+            print('[视频合并完成]' + title)
+            subprocess.Popen('ffmpeg -i %s -vcodec copy -acodec copy %s'%(os.path.join(currentVideoPath, os.path.join(currentVideoPath, r'{}-{}.mp4'.format(title, num))),r'{}.mp4'.format(title)), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         else:
-            urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}.mp4'.format(title)),reporthook=Schedule_cmd)  # 写成mp4也行  title + '-' + num + '.flv'
+            urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}.flv'.format(title)),reporthook=Schedule_cmd) 
+            print('[视频合并完成]' + title)
+            subprocess.Popen('ffmpeg -i %s -vcodec copy -acodec copy %s'%(os.path.join(currentVideoPath, r'{}.flv'.format(title)), os.path.join(currentVideoPath, r'{}.mp4'.format(title))), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         num += 1
 
 # 合并视频
 def combine_video(video_list, title):
-    currentVideoPath = os.path.join(sys.path[0], 'bilibili/download')  # 当前目录作为下载目录
+    currentVideoPath = os.path.join(sys.path[0], 'download')  # 当前目录作为下载目录
     if not os.path.exists(currentVideoPath):
         os.makedirs(currentVideoPath)
     if len(video_list) >= 2:
@@ -226,20 +224,9 @@ def download(BVid):
         combine_video(video_list, title)
 
 
-
-
-
-
-
-
-
-
-
-
-
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(chrome_options=chrome_options)
+driver = webdriver.Chrome('enviroment/chromedriver',chrome_options=chrome_options)
 BVlist=[]
 
 def nextPage():
@@ -286,8 +273,8 @@ def downPlaylist(*, favor:str):
 
 
 #收藏夹地址，注意收藏夹一定要是公开的
-downPlaylist(favor='')
-downBV(bv='')
+downPlaylist(favor='https://www.bilibili.com/video/BV16t411y7zx')
+# downBV(bv='BV12t4y1X7p8')
 
 
 
