@@ -6,6 +6,16 @@ import os
 import json
 import shutil
 import sys
+import datetime
+import time
+sys.path.append(os.path.dirname(__file__)+'/..')
+from color.colorprint import cc
+from enum import Enum
+
+class DownloadFilter(Enum):
+    blockForbid = 1 << 0
+    blockUnWanna = 1 << 1
+    none = 0
 
 file_cfg = './lizhi/conf.cfg'
 json_data = None
@@ -13,6 +23,10 @@ folder_download = './lizhi/podcasts'
 current_author_name = ""
 current_title_name = ""
 current_file_path = ""
+# dfilter = DownloadFilter.blockForbid.value
+dfilter = DownloadFilter.blockForbid.value | DownloadFilter.blockUnWanna.value
+rStrForbid = r'(付费|预告|鬼影重重|影榴莲)'
+rStrDownload = r'(风水|恐怖|传说|故事|毛嗑|鬼|灵异|灵异|怪物|怪谈|头七|神秘|怪谈|事件|死|妖怪|仙|奇谈|诡|魂|亲历|清明|七月|7月|档案|外星人|惊魂|奇了怪了|x事在身边)'
 
 def clear_all():
     make_sure_remove_all = input('你确定要清空%s吗? (OK / any)'%folder_download)
@@ -64,7 +78,7 @@ def get_music_lizhifm(url):
         mp3_url = html['data']['url']
         return mp3_url
     else:
-        print("!!!"+html['msg'])
+        cc.print("!!!%s"%html['msg'],cc.red)
         return None
 
 def download_progress(block_num, block_size, total_size):
@@ -79,13 +93,15 @@ def download_progress(block_num, block_size, total_size):
 
 def downloadFromPage(startUrl):
     global json_data,current_file_path,current_author_name,current_title_name
+    # if startUrl == 'https://www.lizhi.fm/1027923/5115069225546210310':
+    #     print(123)
     page = requests.get(startUrl)
     userId = re.findall('(/[0-9]{5,10}/)', startUrl)[0]
     downloadurl = get_music_lizhifm(startUrl)
-    urlList = []
     # print(page.content)
+    # with open('tmp.tmp','w') as f:
+    #     f.write(page.text)
     bs = BeautifulSoup(page.content, features='lxml')
-    # print()
     # print(bs.find('div', attrs=''))
     if downloadurl:
         try:
@@ -96,38 +112,58 @@ def downloadFromPage(startUrl):
         if folder_name not in json_data:
             json_data[folder_name] = {}
         json_data[folder_name]['url'] = startUrl
+        date = bs.select(".audioTime")[0].text
+        dt = time.strptime(date, '%Y-%m-%d')
+        dt_str = time.strftime('%y%m%d', dt)
         title = bs.select(".audioName")[0].text
-        # print(title)
-        if title.find('付费') == -1:
-            filename = '%s/%s/%s.mp3'%(folder_download,folder_name,title)
-            # if not os.path.exists(filename):
-            current_file_path = filename
-            current_author_name = folder_name
-            current_title_name = title
-            if "last" not in json_data[folder_name] or json_data[folder_name]['last']!=downloadurl:
-                if not os.path.exists(folder_download+'/'+folder_name):
-                    os.mkdir(folder_download+'/'+folder_name)
-                json_data[folder_name]['last'] = downloadurl
-                urllib.request.urlretrieve(downloadurl, filename, download_progress)
+        if re.search(rStrForbid, title) is None or dfilter&DownloadFilter.blockForbid.value==0:
+            if re.search(rStrDownload, title) is not None or dfilter&DownloadFilter.blockUnWanna.value==0:
+                filename = '%s/%s/%s_%s.mp3'%(folder_download,folder_name,dt_str ,title)
+                # if not os.path.exists(filename):
+                current_file_path = filename
+                current_author_name = folder_name
+                current_title_name = title
+                if "last" not in json_data[folder_name] or json_data[folder_name]['last']!=downloadurl:
+                    if re.search(rStrDownload, title) is None:
+                        cc.print(f'downloading {filename}', cc.red)
+                    else:
+                        cc.print(f'downloading {filename}', cc.yellow)
+                    if not os.path.exists(folder_download+'/'+folder_name):
+                        os.mkdir(folder_download+'/'+folder_name)
+                    json_data[folder_name]['last'] = downloadurl
+                    urllib.request.urlretrieve(downloadurl, filename, download_progress)
+                else:
+                    cc.print(f'had downloaded {title}', cc.white)
+            else:
+                cc.print(f'skip {title}', cc.white)
+        else:
+            cc.print(f'skip {title}', cc.white)
+    else:
+        cc.print(f'skip 抢先听/付费', cc.white)
     save_cfg()
     # get next url
+    urlList = []
     for link in bs.findAll('a'):
         url = link.get('href')
-        downloadableUrl = re.findall('(^[0-9]{19}$)', url)
+        # print(link.previous_sibling)
+        downloadableUrl = re.findall('(^[0-9]{17,21}$)', url)
         if downloadableUrl:
             urlList.append(downloadableUrl[0])
+        if url=='0':
+            urlList.append(url)
+    # print(urlList)
     if(len(urlList) == 2):
-        nextUrl = 'https://www.lizhi.fm'+userId+urlList[1]
-        print('nextUrl: ' + nextUrl)
+        nextUrl = 'https://www.lizhi.fm'+userId+urlList[len(urlList)-1]
+        cc.print('nextUrl: ' + nextUrl, cc.blue)
         downloadFromPage(nextUrl)
     else:
-        print('urlList length error:')
+        cc.print('..搜索结束',cc.blue)
         # save_cfg()
         return
         # exit()
 
 if __name__ == '__main__':
-    print('*' * 30 + 'ready to download' + '*' * 30)
+    cc.print('*' * 30 + 'ready to download' + '*' * 30, cc.cyan)
     clear_all()
     url = input('[请输入初始下载链接]:')
     # url = 'https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020'
