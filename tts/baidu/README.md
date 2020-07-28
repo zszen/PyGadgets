@@ -1,57 +1,40 @@
-## 简介
+# 接口说明
+更新时间：2019-12-27
 
-使用python脚本方式测试rest api 合成接口
+基于该接口，开发者可以轻松的获取语音合成能力
+请求说明
 
-- 支持python 2.7 及 python 3.7+, 其它版本自行测试
+    合成文本长度必须小于1024字节，如果本文长度较长，可以采用多次请求的方式。文本长度不可超过限制
 
+举例，要把一段文字合成为语音文件：
 
+result  = client.synthesis('你好百度', 'zh', 1, {
+    'vol': 5,
+})
 
-## 测试流程
+# 识别正确返回语音二进制 错误则返回dict 参照下面错误码
+if not isinstance(result, dict):
+    with open('auido.mp3', 'wb') as f:
+        f.write(result)
 
-### 修改tts.py
+参数 	类型 	描述 	是否必须
+tex 	String 	合成的文本，使用UTF-8编码，
+请注意文本长度必须小于1024字节 	是
+cuid 	String 	用户唯一标识，用来区分用户，
+填写机器 MAC 地址或 IMEI 码，长度为60以内 	否
+spd 	String 	语速，取值0-9，默认为5中语速 	否
+pit 	String 	音调，取值0-9，默认为5中语调 	否
+vol 	String 	音量，取值0-15，默认为5中音量 	否
+per 	String 	发音人选择, 0为女声，1为男声，
+3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女 	否
 
-从网页中申请的应用获取appKey和appSecret
+返回样例：
 
-```python
-# 填写网页上申请的appkey 如 API_KEY="g8eBUMSokVB1BHGmgxxxxxx"
-API_KEY = '4E1BG9lTnlSeIf1NQFlrxxxx'
-
-# 填写网页上申请的APP SECRET 如 SECRET_KEY="94dc99566550d87f8fa8ece112xxxxx"
-SECRET_KEY = '544ca4657ba8002e3dea3ac2f5fxxxxx'
-```
-
-
-
-
-
-
-## 运行 tts.py，进行合成
-
-命令为 python tts.py
-
-结果在result.mp3，如果遇见错误，结果在error.txt
-
-其中
-
-- Content-Type: audio/mp3，表示合成成功，可以播放MP3 result.mp3
-- Content-Type: application/json 表示错误   error.txt打开可以看到错误信息的json
-
-### 修改合成参数
-
-```python
-TEXT = "欢迎使用百度语音";
-
-# 发音人选择, 基础音库：0为度小美，1为度小宇，3为度逍遥，4为度丫丫，
-# 精品音库：5为度小娇，103为度米朵，106为度博文，110为度小童，111为度小萌，默认为度小美 
-PER = 0;
-#语速，取值0-9，默认为5中语速
-SDP = 5;
-#音调，取值0-9，默认为5中语调
-PIT = 5;
-#音量，取值0-9，默认为5中音量
-VOL = 5;
-
-CUID = "123456PYTHON";
-
-```
-
+// 成功返回二进制文件流
+// 失败返回
+{
+    "err_no":500,
+    "err_msg":"notsupport.",
+    "sn":"abcdefgh",
+    "idx":1
+}
