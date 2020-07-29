@@ -11,10 +11,15 @@ import time
 sys.path.append(os.path.dirname(__file__)+'/..')
 from color.colorprint import cc
 from enum import Enum
+import threading
 
 class DownloadFilter(Enum):
-    blockForbid = 1 << 0
-    blockUnWanna = 1 << 1
+    blockForbid = 1 << 0 #屏蔽关键词组
+    blockUnWanna = 1 << 1 #只下载需求词
+    addByInput = 1 << 2 #只下载输入文本
+    clearHistoryFile = 1<<3 # 清空以前的音频
+    history = 1<<4 # 下载历史文件
+    continuity = 1<<5 # 连续下载当前节目
     none = 0
 
 file_cfg = './lizhi/conf.cfg'
@@ -23,8 +28,11 @@ folder_download = './lizhi/podcasts'
 current_author_name = ""
 current_title_name = ""
 current_file_path = ""
-# dfilter = DownloadFilter.blockForbid.value
-dfilter = DownloadFilter.blockForbid.value | DownloadFilter.blockUnWanna.value
+thread_num = 10
+dl_timeoutp = 5
+# 增加下载音频
+# dfilter = DownloadFilter.blockForbid.value | DownloadFilter.addByInput.value
+dfilter = DownloadFilter.blockForbid.value | DownloadFilter.blockUnWanna.value | DownloadFilter.history.value | DownloadFilter.continuity.value
 rStrForbid = r'(付费|预告|鬼影重重|影榴莲)'
 rStrDownload = r'(风水|恐怖|传说|故事|毛嗑|鬼|灵异|灵异|怪物|怪谈|头七|神秘|怪谈|事件|死|妖怪|仙|奇谈|诡|魂|亲历|清明|七月|7月|档案|外星人|惊魂|奇了怪了|x事在身边)'
 
@@ -65,7 +73,7 @@ for i,k in enumerate(json_data):
 print('============')
 
 # _ud.mp3:超高清; _hd.mp3:高清; _sd.m4a:低清
-# https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020
+
 def get_music_lizhifm(url):
     id = url.rsplit('/', 1)[1]
     url = 'http://www.lizhi.fm/media/url/{}'.format(id)
@@ -141,36 +149,70 @@ def downloadFromPage(startUrl):
     else:
         cc.print(f'skip 抢先听/付费', cc.white)
     save_cfg()
-    # get next url
-    urlList = []
-    for link in bs.findAll('a'):
-        url = link.get('href')
-        # print(link.previous_sibling)
-        downloadableUrl = re.findall('(^[0-9]{17,21}$)', url)
-        if downloadableUrl:
-            urlList.append(downloadableUrl[0])
-        if url=='0':
-            urlList.append(url)
-    # print(urlList)
-    if(len(urlList) == 2):
-        nextUrl = 'https://www.lizhi.fm'+userId+urlList[len(urlList)-1]
-        cc.print('nextUrl: ' + nextUrl, cc.blue)
-        downloadFromPage(nextUrl)
-    else:
-        cc.print('..搜索结束',cc.blue)
-        # save_cfg()
-        return
-        # exit()
 
-if __name__ == '__main__':
-    cc.print('*' * 30 + 'ready to download' + '*' * 30, cc.cyan)
-    clear_all()
-    url = input('[请输入初始下载链接]:')
-    # url = 'https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020'
-    if url!='':
-        downloadFromPage(url)
+    if dfilter&DownloadFilter.continuity.value:
+        # get next url
+        urlList = []
+        for link in bs.findAll('a'):
+            url = link.get('href')
+            # print(link.previous_sibling)
+            downloadableUrl = re.findall('(^[0-9]{17,21}$)', url)
+            if downloadableUrl:
+                urlList.append(downloadableUrl[0])
+            if url=='0':
+                urlList.append(url)
+        # print(urlList)
+        if(len(urlList) == 2):
+            nextUrl = 'https://www.lizhi.fm'+userId+urlList[len(urlList)-1]
+            cc.print('nextUrl: ' + nextUrl, cc.blue)
+            downloadFromPage(nextUrl)
+        else:
+            cc.print('..搜索结束',cc.blue)
+            # save_cfg()
+            return
+            # exit()
+
+def get_download_url():
     for k in json_data:
         url = json_data[k]['url']
-        print(k)
-        downloadFromPage(url)
-    save_cfg()
+        yield url
+        # downloadFromPage(url)
+
+lock = threading.Lock()
+def loop_thread(dl_urls):
+    # print(f'thread {threading.current_thread().name} is running')
+    while True:
+        try:
+            with lock:
+                url = next(dl_urls)
+        except StopIteration:
+            break
+        print(url)
+        try:
+            downloadFromPage(url)
+            save_cfg()
+        except:
+            print(f'except fail : {url}')
+    # print(f'thread {threading.current_thread().name} end !')
+
+
+if __name__ == '__main__':
+    cc.print('*' * 30 + ' ready to download ' + '*' * 30, cc.cyan)
+    if dfilter&DownloadFilter.clearHistoryFile.value:
+        clear_all()
+    if dfilter&DownloadFilter.addByInput.value:
+        # url = 'https://www.lizhi.fm/1991282/5096298613617271430?u=2674259910694143020'
+        url = input('[请输入新的荔枝下载链接]:')
+        if url!='':
+            downloadFromPage(url)
+            save_cfg()
+    if dfilter&DownloadFilter.history.value:
+        dl_urls = get_download_url()
+        threads = []
+        for i in range(0, thread_num):
+            t = threading.Thread(target=loop_thread, name=f'thread{i}', args=(dl_urls,))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
+    cc.print('*' * 30 + ' end ' + '*' * 30, cc.white)

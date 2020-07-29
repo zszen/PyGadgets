@@ -274,7 +274,7 @@ def downPlaylist(*, favor:str):
 
 #收藏夹地址，注意收藏夹一定要是公开的
 # downPlaylist(favor='https://www.bilibili.com/video/BV16t411y7zx')
-downBV(bv='BV1hE411p7R6')
+downBV(bv='')
 
 
 
