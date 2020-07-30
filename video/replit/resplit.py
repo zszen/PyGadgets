@@ -16,7 +16,7 @@ def get_video_info(input_path):
         print(str(err.stderr, encoding='utf8'))
         sys.exit(1)
 
-def split_video(input_path):
+def split_video(input_path): 
     # input = ffmpeg.input(input_path)
     split = ffmpeg.input('in.mp4').filter_multi_output('split') 
     split0 = split.stream(0) 
