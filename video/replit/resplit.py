@@ -24,6 +24,6 @@ def split_video(input_path):
     ffmpeg.concat(split0, split1).output('out.mp4').run()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     video_info = get_video_info(root+'./in/in.mp4')
     print(video_info['duration'])
