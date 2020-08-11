@@ -1,0 +1,7 @@
+selenium
+imageio
+imageio==2.4.1
+moviepy
+xmltodict
+websocket
+websocket-client
