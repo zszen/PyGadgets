@@ -1,0 +1,15 @@
+{
+    "apikey":{
+        "xunfeiai":{
+            "APPID":"",
+            "APIKey":"",
+            "APISecret":""
+        },
+        "baiduai":{
+            "APPID":"",
+            "APIKey":"",
+            "APISecret":""
+        }
+    }
+    
+}
