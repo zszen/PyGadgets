@@ -2,7 +2,8 @@ import os
 import re
 
 # change it
-project_remote_git = 'https://github.com/ZackaryShen/TencentVideoD.git'
+project_remote_git = input('git addr: ')
+# 'https://github.com/ZackaryShen/TencentVideoD.git'
 
 #solid const
 root_path = '/Users/zszen/Desktop/network/git'
