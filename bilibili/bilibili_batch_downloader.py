@@ -2,13 +2,13 @@
 from selenium import webdriver
 from time import sleep
 # import ffmpeg
-import imageio
+# import imageio
 import requests, time, hashlib, urllib.request, re, json
-from moviepy.editor import *
+# from moviepy.editor import *
 import os, sys
 import subprocess
 
-imageio.plugins.ffmpeg.download()
+# imageio.plugins.ffmpeg.download()
 
 start_time = time.time()
 
@@ -124,11 +124,12 @@ def down_video(video_list, title, start_url, page):
         if len(video_list) > 1:
             urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}-{}.flv'.format(title, num)),reporthook=Schedule_cmd) 
             print('[视频合并完成]' + title)
-            subprocess.Popen('ffmpeg -i %s -vcodec copy -acodec copy %s'%(os.path.join(currentVideoPath, os.path.join(currentVideoPath, r'{}-{}.mp4'.format(title, num))),r'{}.mp4'.format(title)), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            subprocess.Popen('ffmpeg -i "%s" -vcodec copy -acodec copy "%s"'%(os.path.join(currentVideoPath, os.path.join(currentVideoPath, r'{}-{}.mp4'.format(title, num))),r'{}.mp4'.format(title)), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         else:
             urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}.flv'.format(title)),reporthook=Schedule_cmd) 
             print('[视频合并完成]' + title)
-            subprocess.Popen('ffmpeg -i %s -vcodec copy -acodec copy %s'%(os.path.join(currentVideoPath, r'{}.flv'.format(title)), os.path.join(currentVideoPath, r'{}.mp4'.format(title))), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            ffcmd = 'ffmpeg -i "%s" -vcodec copy -acodec copy "%s"'%(os.path.join(currentVideoPath, r'{}.flv'.format(title)), os.path.join(currentVideoPath, r'{}.mp4'.format(title)))
+            subprocess.Popen(ffcmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         num += 1
 
 # 合并视频
@@ -226,7 +227,7 @@ def download(BVid):
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--headless')
-driver = webdriver.Chrome('enviroment/chromedriver',chrome_options=chrome_options)
+driver = webdriver.Chrome('core/driver/chromedriver',chrome_options=chrome_options)
 BVlist=[]
 
 def nextPage():
@@ -274,8 +275,12 @@ def downPlaylist(*, favor:str):
 
 #收藏夹地址，注意收藏夹一定要是公开的
 # downPlaylist(favor='https://www.bilibili.com/video/BV16t411y7zx')
-downBV(bv='')
-
+bv_url = input("输入网址: ")
+res = re.search(r'(BV((?!\/).)+)', bv_url)
+if res:
+    bv = res.group(1)
+    downBV(bv=bv)
+print('== end ==')
 
 
 #默认下载地址为本py文件所在目录下的download文件夹
