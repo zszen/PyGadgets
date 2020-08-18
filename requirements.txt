@@ -5,3 +5,4 @@ moviepy
 xmltodict
 websocket
 websocket-client
+# scikit-image
