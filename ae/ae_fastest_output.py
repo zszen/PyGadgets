@@ -22,19 +22,20 @@ def loop_thread(idx):
     global render_count, tm, render_count_his, fps_count
     p = subprocess.Popen(args=f'"{path_aerender}" -project {path_project4output}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
     for line in iter(p.stdout.readline, b''):
-        linestr = line.decode('gb2312')
+        print(line)
+        # linestr = line.decode('gb2312')
         # print(linestr)
         # linestr = str(line,'unicode')
-        if not re.search(r'Seconds', linestr):
-            continue
-        if re.search(r'Skipping', linestr):
-            continue
-        render_count+=1
-        if time.time()-tm>1:
-            tm = time.time()
-            fps_count = render_count-render_count_his
-            render_count_his = render_count
-            print(f'处理速度：{fps_count} fps')
+        # if not re.search(r'Seconds', linestr):
+        #     continue
+        # if re.search(r'Skipping', linestr):
+        #     continue
+        # render_count+=1
+        # if time.time()-tm>1:
+        #     tm = time.time()
+        #     fps_count = render_count-render_count_his
+        #     render_count_his = render_count
+        #     print(f'处理速度：{fps_count} fps')
     p.stdout.close()
     p.wait()
     print(f'线程 {idx} 结束 !')
