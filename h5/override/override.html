@@ -1,0 +1,41 @@
+<html>
+
+<body>
+
+<script>
+
+var funcNames = ['blur','focusout','visibilitychange','mozvisibilitychange','msvisibilitychange','webkitvisibilitychange'];
+
+rebuild_hock(window)
+rebuild_hock(document)
+rebuild_hock(window.top)
+
+function rebuild_hock(target){
+    target.__proto__.z_addEventListener = target.__proto__.addEventListener;
+    target.__proto__.addEventListener = rebuild_listener;
+}
+
+function rebuild_listener(e,f,b){
+    // console.log(e,f,b);
+    var res = funcNames.find(el=>el==e);
+    if(res!=null){
+        console.log(e + ' event forbidden');
+        return;
+    }
+    console.log("res", res);
+    
+    this.z_addEventListener(e,f,b);
+}
+
+document.addEventListener('click',()=>{
+    console.log(123)
+}, false)
+
+window.addEventListener('focus',()=>{
+    console.log(234)
+}, false)
+
+</script>
+
+</body>
+</html>

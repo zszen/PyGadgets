@@ -26,6 +26,6 @@ if __name__ == "__main__":
                 continue
             filename = os.path.basename(f).split('.')[0]
             outfile = os.path.dirname(f)+'/'+filename+'_4x.png'
-            os.system(f'waifu2x -t p -s 2 -n 1 -i {f} -o {outfile}')
-            os.system(f'waifu2x -t p -s 2 -n 1 -i {outfile} -o {outfile}')
+            os.system(f'waifu2x -t p -s 2 -n 1 -i \"{f}\" -o \"{outfile}\"')
+            os.system(f'waifu2x -t p -s 2 -n 1 -i \"{outfile}\" -o \"{outfile}\"')
             print(f'done {outfile}')

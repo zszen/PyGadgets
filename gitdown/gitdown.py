@@ -1,12 +1,15 @@
 import os
 import re
 
+#solid const
+# root_path = f'{os.path.expandvars('~')}/Desktop/network/git'
+root_path = f'{os.path.expandvars("$HOME")}/Desktop/Code'
+print("root_path", root_path)
+
 # change it
 project_remote_git = input('git addr: ')
 # 'https://github.com/ZackaryShen/TencentVideoD.git'
 
-#solid const
-root_path = '/Users/zszen/Desktop/network/git'
 
 res = re.search(r'([^/]+)/([^/]+)(?!.*/)',project_remote_git)
 project_name = f'{res.group(2)}'

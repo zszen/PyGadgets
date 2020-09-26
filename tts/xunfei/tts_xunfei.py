@@ -31,9 +31,31 @@ import os
 import sys
 sys.path.append(os.path.dirname(__file__)+'/../../')
 from enum import Enum
+from playsound import playsound
 
-
-vcn = "x2_chaoge"
+pool_vnc = [
+    {
+        "label":"小燕",
+        "name":"xiaoyan"
+    },
+    {
+        "label":"许久",
+        "name":"aisjiuxu"
+    },
+    {
+        "label":"小萍",
+        "name":"aisxping"
+    },
+    {
+        "label":"小婧",
+        "name":"aisjinger"
+    },
+    {
+        "label":"许小宝",
+        "name":"aisbabyxu"
+    },
+]
+# vcn = "x2_chaoge"
 # vcn = "xiaoyan"
 # vcn = "yiping"
 # path = os.path.dirname(__file__)+'/'
@@ -48,6 +70,7 @@ with open('core/data.json') as f:
     app_id = info['apikey']['xunfeiai']['APPID']
     api_key = info['apikey']['xunfeiai']['APIKey']
     secret_key = info['apikey']['xunfeiai']['APISecret']
+    print(app_id, api_key, secret_key)
 
 
 STATUS_FIRST_FRAME = 0  # 第一帧的标识
@@ -57,7 +80,7 @@ STATUS_LAST_FRAME = 2  # 最后一帧的标识
 
 class Ws_Param(object):
     # 初始化
-    def __init__(self, APPID, APIKey, APISecret, Text):
+    def __init__(self, APPID, APIKey, APISecret, Text, vcn):
         self.APPID = APPID
         self.APIKey = APIKey
         self.APISecret = APISecret
@@ -107,6 +130,7 @@ class Ws_Param(object):
 def on_message(ws, message):
     try:
         message =json.loads(message)
+        print(message)
         code = message["code"]
         sid = message["sid"]
         audio = message["data"]["audio"]
@@ -123,6 +147,7 @@ def on_message(ws, message):
 
             with open(path+file_name, 'ab') as f:
                 f.write(audio)
+            playsound(path+file_name)
 
     except Exception as e:
         print("receive msg,but parse exception:", e)
@@ -158,11 +183,14 @@ def on_open(ws):
 if __name__ == "__main__":
     # 测试时候在此处正确填写相关信息即可运行
     while True:
+        info = [f"{i}:{unit['label']}" for i,unit in enumerate(pool_vnc)]
+        vcn_id = input(f'输入发音({"".join(info)})：')
+        vcn = pool_vnc[int(vcn_id)]['name']
         say = input("输入内容：")
         file_name = say+'.mp3'
         wsParam = Ws_Param(APPID=app_id, APIKey=api_key,
                         APISecret=secret_key,
-                        Text=say)
+                        Text=say, vcn=vcn)
         websocket.enableTrace(False)
         wsUrl = wsParam.create_url()
         ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)

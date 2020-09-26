@@ -3,14 +3,25 @@ import re,os
 
 def get_files_input():
     files = input('resize files:')
-    res = re.split(r'(\.((png)|(jpg)|(jpeg))) ?', files)
     pool = []
-    for i in range(0,len(res),6):
-        try:
-            pool.append(res[i]+res[i+1])
-        except:
-            pass
-    print("files", len(pool))
+    f = files.rstrip()
+    files = f.replace('\ ',' ')
+    if os.path.isdir(files):
+        for p,fd,fi in os.walk(files):
+            for f in fi:
+                if not re.search(r'\.((png)|(jpg)|(jpeg))$',f):
+                    continue
+                pool.append(f'{p}/{f}')
+    else:
+        res = re.split(r'(\.((png)|(jpg)|(jpeg))) ?', files)
+        for i in range(0,len(res),6):
+            try:
+                string = res[i]+res[i+1]
+
+                pool.append(string)
+            except:
+                pass
+        print("files", len(pool))
     return pool
 
 def get_resize_info():
@@ -25,6 +36,8 @@ def get_resize_info():
     return resize
 
 def deal_resize(file_path, resize):
+    f = file_path.rstrip()
+    file_path = f.replace('\ ',' ')
     im = Image.open(file_path)
     if len(resize)==1:
         size = resize[0],resize[0]
