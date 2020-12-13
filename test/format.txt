@@ -1,0 +1,529 @@
+文件
+
+    新建/New
+    Ctrl + N
+    合并/Add
+    Shift + Ctrl+ 0
+    打开/Open
+    Ctrl +0
+    关闭全部/Close All
+    Shift + Ctrl + W
+    存储为/Save As
+    Shift + Ctrl + S
+    存储/Save
+    Ctrl +5
+    退出/Quit
+    Ctrl + Q
+
+动画时间线
+
+    关键帧模式 曲线模式/Key Mode/F-Curve Mode
+    空格键(Spacebar)
+    点级别动画开关/Point level animation switch
+    L
+    选择的轨道/. with selected Tracks
+    Ctrl + 空格键(Spacebar)
+    记录激活的物体/Record Active Objects
+    F9
+    记录当前状态
+    空
+    倒放,停止/Play Backwards/Stop
+    F6
+    停止/Stop
+    F7
+    播放,停止/Play Forwards/Stop
+    F8
+    自动关键帧/Autokeying
+    Ctrl + F9
+    到结束帧/Goto Start of Animation
+    Shift + F
+    到前一个关键帧/Goto Previous Key
+    Ctrl + F
+    转到前一帧/Goto Previous Frame
+    空
+    到下一个关键帧/Goto Next Key
+    Ctrl + G
+    转到下一帧/Goto Next Frame
+    空
+    到结束/Goto End
+    Shift + G
+    到第一个关键帧/Goto First Key
+    Ctrl + P
+    转到最后关键帧/Goto Last Key
+    Ctrl + 0 (zero)
+    选择帧Frame Selected
+    空
+    所有帧/Frame All
+    空
+    转到当前帧/Goto Current Frame
+    0 (zero)
+    到开始/Goto Start
+    Aft + F
+    到结束/Goto End
+    Aft + G
+    帧预览范围/Frame Preview Range
+    Alt + H
+    转到下一个标记/Goto Next Marker
+    Shift + N
+    转到上一个标记/Goto Previous Marker
+    Shift + P
+    转到第一个标记/Goto First Marker
+    Ctrl + Shift + P
+    转到最后的标记/Goto Last Marker
+    Ctrl + Shift +0
+    区域工具/Region Tool
+    空
+    波纹编辑/Ripple Edit
+    Alt + R
+    自动模式/Automatic Mode
+    Aft+A
+    显示搜索栏/Show Search Bar
+    Ctrl + F
+    显示过滤器/Show Filter
+    Ctrl + U
+    关键帧/Key Interpolation
+    空
+    自动相切（经典）/Auto Tangents
+    A, T 1
+    断开切线/Break Tangents
+    B, T 2
+    零角度（相切）/Zero Angle (tangents)
+    0, T 3 (zero)
+    零长度（相切）/Zero Length (tangents)
+    L, T 4
+    限制/Clamp
+    C, TB
+    线性/Linear
+    Alt + L, T6
+    步幅/Step
+    Alt + T, T 7
+    柔合/Soft
+    Alt +5, T8
+    缓和处理/Ease In
+    Alt +1,T1
+    缓入/Ease Ease
+    Alt + E, T 9
+    缓出/Ease Out
+    Aft+0,TO
+
+对象管理器
+
+    合并对象/Merge Objects
+    Shift + Ctrl+ 0
+    显示搜索栏/Show Search Bar
+    Ctrl + F
+    使用过滤/Show Fitter
+    Ctrl + U
+    工程信息/Project Information
+    Ctrl + I
+    群组对象/Group Objects
+    Alt + G
+    展开群组/Expand Object Group
+    Shift + G
+    新对象作为父对象/New object as Parent object
+    Alt + create object
+    新对象作为子对象/New object as Child object
+    Shift + create object
+    选择对象,包括子对象Select Obj. incl. Child Objects
+    Click with RMB
+
+图片查看器
+
+    全屏模式/Fullscreen Mode
+    Ctrl+F
+    前放/Play
+    Spacebar
+    设置为A/Set as A
+    A
+    设置为N/Set as B
+    Ctrl + I
+    互换A/B/Swap AB
+    Alt + G
+    设置为预览开始/Set as Preview Start
+    Shift + G
+    设置为预览结束/Set as Preview End
+    0
+    自动缩放/Auto Zoom
+    Shift + create object
+    放大/缩小/Zoom In/Out
+    +/-
+    转到100%或全屏/Switch 100% and Fullscreen
+    Double-click
+
+运动跟踪
+
+    移动序列/Move Sequence
+    ALT + MMB
+    序列大小/Scale Sequence
+    ALT + RMB
+    序列全屏/Sequence Fullscreen
+    ALT + 0
+    创建用户跟踪/Create User Track
+    CTRL + LMB
+    套索选取/Lasso Selection
+    LMB
+    缩放/Zoom
+    ALT
+
+建模
+
+    创建点/Create Point
+    MA
+    桥接/Bridge
+    B, MB
+    笔刷Brush
+    M C
+    封闭多边形孔洞/Close Polygon Hole
+    M D
+    多边形画笔/Create Polygon
+    M E
+    切割边/Edge Cut
+    M F
+    熨烫/Iron
+    M G
+    切刀/Knife
+    K, M K
+    磁铁/Magnet
+    M l
+    镜像/Mirror
+    M H
+    设置点值/Set Point Value
+    M L
+    滑动/Slide
+    M O
+    缝合/Stitch and Sew
+    M P
+    焊接/Weld
+    M Q
+    细分曲面权重/Weight Subdivision Surfaces
+    M R, . HK(热键)
+    倒角/Bevel
+    M S
+    挤压/Extrude
+    D, MT
+    内部挤压/Extrude Inner
+    I, MW
+    矩阵挤压/Matrix Extrude
+    M X
+    偏移/Smooth Shift
+    M Y
+    沿法线移动/Normal Move
+    M Z
+    沿法线缩放/Normal Scale
+    M #
+    沿法线旋转/Normal Rotate
+    M ,
+    分裂/Split
+    UP
+    反转法线/Reverse Normals
+    U R
+    移除N-gons/Remove N-gons
+    U E
+    细分/Subdivide
+    US
+    融解/Melt
+    U Z
+    坍塌/Collapse
+    U C
+    实时N-gons三角分布/Triangulate N-gons
+    UT
+    断开连接/Disconnect
+    U D
+    对齐法线/Align Normals
+    U A
+    转为可编辑对象/Make Editable
+    C
+    重建N-gons三角分布Retriangluate N-gons
+    U G
+    反三角化/Un-triangulate
+    U U
+    移动对象/Move Object
+    4 HK(热键)
+    缩放对象/Scale Object
+    5 HK(热键)
+    旋转对象/Rotate Object
+    6 HK(热键)
+    Move Object w/o Children
+    7 HK(热键)
+    移动/Move
+    E
+    旋转/Rotate
+    R
+    缩放/Scale
+    T
+    切换活动工具/Toggle Active Tool
+    空格键（Space）
+    切换模式/Toggle Modeling Mode
+    空格键(Return)
+    撤消（动作）Undo (Action)
+    Shift + Z
+    X-轴/X -Axis / Heading
+    X
+    Y-轴/Y -Axis / Pitch
+    Y
+    Z-轴/Z -Axis / Bank
+    Z
+    全选/Select All
+    Ctrl + A
+    选择连接/Select Connected
+    U W
+    全部取消选择/Deselect All
+    Shift + Ctrl + A
+    套索选择/Free Selection
+    8 HK(热键)
+    实时选择/Live Selection
+    9 HK(热键)
+    框选/Rectangle Selection
+    0 HK(热键)
+    反选/Invert
+    U I
+    转换选择模式/Convert Selection
+    U X
+    轮廓选择/Outline Selection
+    U Q
+    填充选择/Fill Selection
+    U F
+    扩展选区/Grow Selection
+    U Y
+    环状选择/Ring Selection
+    U B
+    循环选择/Loop Selection
+    U L
+    收缩选区Shrink Selection
+    U K
+
+BodyPaint 3D
+
+    顺时针旋转笔刷/Rotate Brush Clockwise
+    Alt + . oder Alt +
+    逆时针旋转笔刷/Rotate Brush Counterclockwise
+    Alt + [ oder Alt +
+    增加笔刷大小/Increase Brush Size
+    , or [
+    减小笔刷大小/Decrease Brush Size
+    . or ]
+    增加笔刷硬度/Increase Brush Hardness
+    Shift +. or Shift +]
+    减小笔刷的硬度/Decrease Brush Hardness
+    Shift +. or Shift +[
+    增加笔刷压力/Increase Brush Pressure
+    Ctrl +. or eta+ I
+    减小笔刷压力/Decrease Brush Pressure
+    Ctrl +. or Ctrl +[
+
+材质管理
+
+    加载材质/Load Materials
+    Shift + Cut +0
+    新材质/New Material
+    Ctrl + N
+    更换材质/Replace Material by Another
+    Alt + Drag & Drop
+
+属性管理器
+
+    新的属性管理器/New Attribute Manager
+    Shift + F5
+    Increase/decrease parameter change speed with arrows
+    Alt or Shift
+    默认参数/Parameter to default
+    RMB +Arrow
+
+内容浏览器
+
+    新建浏览器/New
+    Ctrl + N
+    搜索栏/Search Bar
+    Ctrl + F, F3
+    我的电脑/Computer
+    空
+    桌面/Desktop
+    空
+    主目录/Home Directory
+    空
+    预置/Presets
+    空
+    目录/Catalogs
+    空
+    最近的项目/Recent Items
+    空
+    搜索结果/Search Resits
+    空
+    收藏夹/Favorites
+    空
+
+编辑
+
+    对象管理器/Object Manager
+    Shift + Fl
+    材质管理/Materials Manager
+    Shift + F2
+    时间线/Timeline
+    Shift + F3
+    层管理器/Layer Manager
+    Shift + F4
+    属性管理器/Attributes Manager
+    Shift + F5
+    图片查看器/Picture Viewer
+    Shift + F6
+    坐标管理器Coordinates Manager
+    Shift + F7
+    内容浏览器/Content Browser
+    Shift + F8
+    构造管理器Structure Manager
+    Shift + F9
+    脚本管理器/Script Manager
+    Shift + F11
+    自定义命令/Customize Commands Manager
+    Shift + F12
+    改变坐标系统/Change Coordinates System
+    空
+    关闭窗口/Close Window
+    Shift + W
+    删除/Delete
+    Backspace/Del
+    Heads Up Display
+    V HK(热键)
+    Toggle Parent Generator
+    空
+    修改时间交互动画/Modify Interactive Anim.Time
+    J + LMB
+    显示帮助/Help via setting/element
+    Ctrl+F1
+
+通用
+
+    开关之间的最后工具和选择/Switch between last tool and selection
+    Spacebar
+    Manager Fullscreen
+    Ctrl + Tab
+
+预览
+
+    Move Camera
+    1, Alt + MMB HK(热键)
+    Scale Camera
+    2, Alt + RMB HK(热键)
+    Rotate Camera
+    3, Alt + LMB HK(热键)
+    Frame Selected Elements
+    5, Alt + S
+    Zoom Selected Object
+    0, Alt +0
+    Zoom to Geometry
+    1-1, Alt + H
+    Hide/Show axes
+    Alt +0
+    View small/large
+    MMB on view
+    Switch views
+    Fl, F2, F3, F4, F5
+    Configure
+    Shift + V
+    Configure All
+    Alt +V
+    Render View
+    Ctrl + R
+    Undo View
+    Shift + Ctrl + Z
+    Redo View
+    Shift + Ctrl + Y
+    Redraw
+    A
+    All Views
+    F5
+    Toggle Active View
+    Pg Up, MMB
+    Gouraud Shading
+    NA
+    Gouraud Shading (Lines)
+    NB
+    Quick Shading
+    NC
+    Quick Shading (Lines)
+    ND
+    Constant Shading
+    NE
+    Hidden Lines
+    NF
+    Lines
+    NG
+    Wireframe
+    NH
+    Isoparms
+    NI
+    Box
+    NK
+    Skeleton
+    NL
+    Display Tags
+    NO
+    Backface Culling
+    NP
+    Textures
+    NO
+    X -Ray
+    NR
+    Use Isoline Editing
+    Alt +A
+
+结构管理
+
+    Import ASCII Data
+    Shift + Ctrl+ 0
+    Jump Last Selection
+    Shift + N
+    Jump Next Selection
+    空
+    Jump Page Up
+    PgUp
+    Jump Page Down
+    PgDown
+    Jump Home
+    Home
+    Jump End
+    End
+    Vertex Map
+    V
+    Points
+    空
+    Polygons
+    0
+    UVW
+    空
+
+渲染
+
+    Render Active Viewport
+    Ctrl + R
+    Render to Picture Viewer
+    Shift + R
+    Render to Picture Viewer (IR)
+    Ctrl + Shift + R
+    Interactive Render Region
+    Alt + R
+    Make Preview
+    Alt + B
+    Render Settings
+    Ctrl + B
+
+雕刻
+
+    Smooth for all brushes
+    Shift
+    Reverse brush effect
+    Cut
+    Switch symmetry mode
+    Alt + X, Y, Z
+    Switch to wireframe mode
+    空
+    Move, scale, rotate template
+    T+LMB, PRIB, MMB
+
+笔刷通用
+
+    Brush size
+    MMB + drag horiz
+    Brush pressure
+    MMB + drag veil
+

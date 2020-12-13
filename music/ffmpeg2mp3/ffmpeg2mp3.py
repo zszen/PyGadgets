@@ -3,10 +3,10 @@ import threading
 import subprocess
 import shutil
 
-is_same_folder = True
+is_detect_samename = False
+is_convert_mp3 = True
 is_remove_orgfile = True
-is_detect_samename = True
-is_convert_mp3 = False
+is_same_folder = False
 output_path = f'{os.path.expanduser("~")}/Desktop/mp3recode/'
 if not os.path.exists(output_path):
     os.mkdir(output_path)
@@ -39,6 +39,8 @@ def loop(pool):
 def getlist(folder):
     folder = folder.rstrip()
     folder = folder.replace('\ ',' ')
+    if not is_convert_mp3:
+        print('skip mp3')
     if os.path.isdir(folder):
         for p,fd,fl in os.walk(folder):
             for fp in fl:

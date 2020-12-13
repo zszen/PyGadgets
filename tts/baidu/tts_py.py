@@ -1,7 +1,7 @@
 # coding: utf-8
 from aip import AipSpeech
 from enum import Enum
-import os
+import os,re
 import sys
 import time
 sys.path.append(os.path.dirname(__file__)+'/../../')
@@ -52,9 +52,17 @@ if __name__ == "__main__":
     p = baip()
     # p.deal('这不是我想要的', VoiceType.woman)
     who = [VoiceType.woman,VoiceType.man,VoiceType.woman,VoiceType.oldman,VoiceType.girl]
+    his_who = '0'
+    talk_str = ''
     while True:
         talk_who = input('输入发音人(0女，1男，3老，4孩)：')
-        talk_str = input('输入内容：')
+        if re.search(r'^(0|1|3|4)',  talk_who) is None:
+            # continue
+            talk_str = talk_who
+            talk_who = his_who
+        else:
+            his_who = talk_who
+            talk_str = input('输入内容：')
         
         p.deal(talk_str, who[min(max(int(talk_who),0),4)])
         

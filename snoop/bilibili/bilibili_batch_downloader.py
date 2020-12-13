@@ -9,6 +9,7 @@ import os, sys
 import subprocess
 import enum
 import threading
+import math
 
 thread_num = 4
 download_path_org = '/Users/zszen/Desktop/BVDown'
@@ -20,6 +21,17 @@ class downtype(enum.Enum):
     downtype_all=1
     downtype_continue=2
     downtype_single=3
+
+class nametype(enum.Enum):
+    nametype_title_index_sub=1
+    nametype_title_sub=2
+    nametype_title_index=3
+    nametype_index_sub=4
+    nametype_sub=5
+    nametype_index=6
+
+dtype = downtype.downtype_all
+ntype = nametype.nametype_title_index_sub
 
 # imageio.plugins.ffmpeg.download()
 # download_path = os.path.join(sys.path[0], 'download')
@@ -131,9 +143,6 @@ def down_video(video_list, title, start_url, page):
             ('Connection', 'keep-alive'),
         ]
         urllib.request.install_opener(opener)
-        # 创建文件夹存放下载的视频
-        if not os.path.exists(currentVideoPath):
-            os.makedirs(currentVideoPath)
         # 开始下载
         if len(video_list) > 1:
             urllib.request.urlretrieve(url=i, filename=os.path.join(currentVideoPath, r'{}-{}.flv'.format(title, num)),reporthook=Schedule_cmd) 
@@ -226,28 +235,30 @@ def get_cid(*,av:str=None, bv:str=None,part:int,downtype:downtype, use_yield:boo
     if downtype==downtype.downtype_single and part>0:
         # cid_list.append(data['pages'][part - 1])
         if use_yield:
-            yield {'url':start_url,'data':data['pages'][part - 1]}
+            yield {'url':start_url,'data':data['pages'][part - 1],'idx':part,'title':video_title}
         else:
-            return [{'url':start_url,'data':data['pages'][part - 1]}]
+            return [{'url':start_url,'data':data['pages'][part - 1],'idx':part,'title':video_title}]
     elif downtype==downtype.downtype_continue and part>0:
         cid_list = []
-        for i in range(part-1,len(data['pages'])):
+        max = len(data['pages'])
+        for i in range(part-1,max):
             # cid_list.append(data['pages'][i])
             # print(data['pages'][i]['part'])
             if use_yield:
-                yield {'url':start_url,'data':data['pages'][i]}
+                yield {'url':start_url,'data':data['pages'][i],'idx':i+1,'max':max,'title':video_title}
             else:
-                cid_list.append({'url':start_url,'data':data['pages'][i]})
+                cid_list.append({'url':start_url,'data':data['pages'][i],'idx':i+1,'max':max,'title':video_title})
         return cid_list
     else:
         # cid_list = data['pages']
+        max = len(data['pages'])
         if use_yield:
             for i,k in enumerate(data['pages']):
-                yield {'url':start_url,'data':k}
+                yield {'url':start_url,'data':k,'idx':i+1,'max':max,'title':video_title}
         else:
             cid_list = []
             for i,k in enumerate(data['pages']):
-                cid_list.append({'url':start_url,'data':k})
+                cid_list.append({'url':start_url,'data':k,'idx':i+1,'max':max,'title':video_title})
             return cid_list
         
     # if '?p=' in start:
@@ -272,15 +283,35 @@ def loop(pool):
 
 def download_final(data):
     # for item in cid_list:
+    print(data)
     url = data['url']
     item = data['data']
+    idx = data['idx']
+    max = data['max']
+    majorTitle = data['title']
+    idx_fixed = str(idx).zfill(int(math.log(max,10))+1)
     # print(url,item)
     # return
     cid = str(item['cid'])
     title = item['part']
-    if not title:
-        title = video_title
+    # if not title:
+    #     title = video_title
     title = re.sub(r'[\/\\:*?"<>|]', '', title)  # 替换为空的
+    
+    
+    if ntype == nametype.nametype_title_sub:
+        title = f'{majorTitle}_{title}'
+    elif ntype == nametype.nametype_title_index:
+        title = f'{majorTitle}_{idx_fixed}'
+    elif ntype == nametype.nametype_index_sub:
+        title = f'{idx_fixed}.{title}'
+    elif ntype == nametype.nametype_sub:
+        title = f'{title}'
+    elif ntype == nametype.nametype_index:
+        title = f'{idx_fixed}'
+    else:
+        title = f'{majorTitle}{idx_fixed}.{title}'
+
     #print('[下载视频的cid]:' + cid)
     #print('[下载视频的标题]:' + title)
     page = str(item['page'])
@@ -288,9 +319,15 @@ def download_final(data):
     video_list = get_play_list(url, cid, quality)
     start_time = time.time()
     # print(title)
+    # print(f'{idx_fixed}/{max}:{title}')
+    # tmp_path = '/Users/zszen/Cache/down bd/《AE100集宝典》系列教程'
+    # os.rename(f'{tmp_path}/{title}.mp4',f'{tmp_path}/{title_fixed}.mp4')
+    # return
     if not os.path.exists(f'{download_path}/{title}.mp4'):
         down_video(video_list, title, url, page)
         combine_video(video_list, title)
+        # if os.path.exists(f'{download_path}/{title}.flv'):
+        #     os.remove(f'{download_path}/{title}.flv')
     else:
         if os.path.exists(f'{download_path}/{title}.flv'):
             os.remove(f'{download_path}/{title}.flv')
@@ -342,7 +379,96 @@ def downPlaylist(*, favor:str):
         count+=1
 
 # /Users/zszen/Desktop/Code/PyGadgets/core/driver/chromedriver
-if __name__ == "__main__":
+debug = False
+if debug and __name__ == "__main__":
+    # title = '123'
+    # url = 'https://www.bilibili.com/video/BV14e411s7Pc?p=1'
+    # video_list = get_play_list(url, '182956055', '20')
+    # down_video(video_list, title, url, 1)
+    # combine_video(video_list, title)
+
+    urls = [
+  "https://www.bilibili.com/video/BV11V411o7fo",
+  "https://www.bilibili.com/video/BV1Et4y1U7YV",
+  "https://www.bilibili.com/video/BV1Fb411r7YD",
+  "https://www.bilibili.com/video/BV13b411r7oW",
+  "https://www.bilibili.com/video/BV1Ht411h7K2",
+  "https://www.bilibili.com/video/BV1wt411W7UL",
+  "https://www.bilibili.com/video/BV16W41167Gd",
+  "https://www.bilibili.com/video/BV1rW411Q7Ci",
+  "https://www.bilibili.com/video/BV1Jp411Z7XE",
+  "https://www.bilibili.com/video/BV1iW411u7AB",
+  "https://www.bilibili.com/video/BV1EW411u72u",
+  "https://www.bilibili.com/video/BV1EW411u7mU",
+  "https://www.bilibili.com/video/BV1wW411x73Y",
+  "https://www.bilibili.com/video/BV12W411s7SN",
+  "https://www.bilibili.com/video/BV1hW411E798",
+  "https://www.bilibili.com/video/BV1NW411H7EN",
+  "https://www.bilibili.com/video/BV1MW411i7Ft",
+  "https://www.bilibili.com/video/BV1ZW411v7oA",
+  "https://www.bilibili.com/video/BV1fW411v7FS",
+  "https://www.bilibili.com/video/BV1LW411v7b3"
+]
+    # for i in range(1000):
+    #     print(urls.pop())
+    # exit(0)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    driver = webdriver.Chrome('core/driver/chromedriver',chrome_options=chrome_options)
+    while True:
+        # BVlist=[]
+        # downPlaylist(favor='https://www.bilibili.com/video/BV16t411y7zx')
+        # https://www.bilibili.com/video/BV1g4411Z7P9?p=15
+        # https://www.bilibili.com/video/BV1U54y1R7mh/?spm_id_from=333.788.videocard.17
+        while len(urls)>0:
+            try:
+                dt = 1 # int(input('类型（1-all,2-continue,3-single）:'))
+                sub_folder = '' # input('子目录：')
+                if sub_folder == '':
+                    download_path = download_path_org
+                else:
+                    download_path = f'{download_path_org}/{sub_folder}'
+                # 创建文件夹存放下载的视频
+                if not os.path.exists(download_path):
+                    os.makedirs(download_path)
+            except:
+                continue
+            else:
+                break
+        if dt==2:
+            dtype = downtype.downtype_continue
+        elif dt==3:
+            dtype = downtype.downtype_single
+        else:
+            dtype = downtype.downtype_all 
+        # bv_url = input("输入网址: ")
+        bv_url = urls.pop()
+        # res = re.search(r'(BV((?!\/).)+)\??', bv_url) 
+        res_bv = re.search(r'(BV(\w+))', bv_url)
+        res_part = re.search(r'(\?|\&)p=(\d+)', bv_url)
+        part_id = res_part.group(2) if res_part is not None else 0
+        res_av = re.search(r'av(\w+)', bv_url)
+        if res_av or res_bv:
+            if res_av:
+                av = res_av.group(1)
+                pool = get_cid(av=av, part=int(part_id),downtype=dtype, use_yield=True)
+            elif res_bv:
+                bv = res_bv.group(1)
+                pool = get_cid(bv=bv, part=int(part_id),downtype=dtype, use_yield=True)
+            pool_thread = []
+            for i in range(thread_num):
+                thread = threading.Thread(target=loop,name=f'i',args=(pool,))
+                thread.start()
+                pool_thread.append(thread)
+            for k in pool_thread:
+                k.join()
+            print('==download one task==')
+        else:
+            print('need bilibili video url')
+    print('== end ==')
+
+
+if not debug and __name__ == "__main__":
     multi_single = False
     # multi_single = False
     if multi_single:
@@ -394,11 +520,15 @@ if __name__ == "__main__":
             while True:
                 try:
                     dt = int(input('类型（1-all,2-continue,3-single）:'))
+                    nt = int(input('命名（1-标题id副标,2-标题副标,3-标题id,4-id副标,5-副标,6-id）:'))
                     sub_folder = input('子目录：')
-                    if sub_folder is '':
+                    if sub_folder == '':
                         download_path = download_path_org
                     else:
                         download_path = f'{download_path_org}/{sub_folder}'
+                    # 创建文件夹存放下载的视频
+                    if not os.path.exists(download_path):
+                        os.makedirs(download_path)
                 except:
                     continue
                 else:
@@ -409,6 +539,19 @@ if __name__ == "__main__":
                 dtype = downtype.downtype_single
             else:
                 dtype = downtype.downtype_all 
+
+            if nt==2:
+                ntype = nametype.nametype_title_sub
+            elif nt==3:
+                ntype = nametype.nametype_title_index
+            elif nt==4:
+                ntype = nametype.nametype_index_sub
+            elif nt==5:
+                ntype = nametype.nametype_sub
+            elif nt==6:
+                ntype = nametype.nametype_index
+            else:
+                ntype = nametype.nametype_title_index_sub 
             bv_url = input("输入网址: ")
             # res = re.search(r'(BV((?!\/).)+)\??', bv_url) 
             res_bv = re.search(r'(BV(\w+))', bv_url)

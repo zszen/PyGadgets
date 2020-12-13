@@ -4,7 +4,7 @@ import pyperclip
 str = ""
 result = []
 
-paths = os.listdir("ts")
+paths = os.listdir("list/ts")
 for path in paths:
   if path.find(".ts")<0:
     continue
@@ -13,7 +13,8 @@ for path in paths:
 
 result.sort(key= lambda x:int(x[:-3]))
 
-final_path = ''.join(['converted/%s|'%path for path in result])
+final_path = ''.join(['ts/%s|'%path for path in result])
 
 pyperclip.copy("concat:%s"%final_path)
+
 
